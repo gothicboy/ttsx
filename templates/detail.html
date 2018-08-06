@@ -82,6 +82,7 @@
 	</div>
 
 	<div class="goods_detail_con clearfix">
+		{% csrf_token %}
 		<div class="goods_detail_pic fl"><img src="/static/{{ good.gpic }}"></div>
 
 		<div class="goods_detail_list fr">
@@ -99,8 +100,8 @@
 			</div>
 			<div class="total">单价：<em>{{ good.gprice }}元</em></div>
 			<div class="operate_btn">
-				<a href="javascript:;" class="buy_btn">立即购买</a>
-				<a href="{% url 'ttsx:cart' %}" class="add_cart" id="add_cart">加入购物车</a>
+				<button onclick="addtocart({{ good.gid }})" class="buy_btn">立即购买</button>
+				<button onclick="addtocart({{ good.gid }})" class="add_cart" id="add_cart">加入购物车</button>
 			</div>
 		</div>
 	</div>
@@ -175,7 +176,23 @@
 			});
 		})
 
-
+		function addtocart(id){
+			var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+			$.ajax({
+				url:'/ttsx/addtocart/',
+				type:'POST',
+				datatype:'json',
+				data:{'gid':id},
+				headers:{'X-CSRFToken': csrf},
+				success:function(data){
+					if(data.code == '200')
+						alert('已添加到购物车')
+				},
+				error:function(data){
+					alert('请求失败！')
+				}
+			});
+		}
 	</script>
 	
 </body>
